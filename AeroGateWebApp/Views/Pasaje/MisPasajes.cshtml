@@ -1,0 +1,72 @@
+@model List<VMPasaje>
+@{
+    ViewData["Title"] = "Mis Pasajes";
+}
+
+<h2 class="mb-3">Mis Pasajes</h2>
+
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">@ViewBag.Error</div>
+}
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-auto">
+        <input type="number" name="mes" value="@ViewBag.Mes" min="1" max="12" class="form-control" placeholder="Mes (1-12)" />
+    </div>
+    <div class="col-auto">
+        <input type="number" name="anio" value="@ViewBag.Anio" min="2020" max="2100" class="form-control" placeholder="Año" />
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-outline-secondary">Filtrar</button>
+        <a asp-action="MisPasajes" class="btn btn-outline-secondary">Todos</a>
+    </div>
+</form>
+
+<table class="table table-striped table-hover align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th>Vuelo</th>
+            <th>Ruta</th>
+            <th>Salida</th>
+            <th>Comprado el</th>
+            <th>Pagado</th>
+            <th>Estado</th>
+            <th>Reintegro</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr>
+                <td><strong>@p.CodigoVuelo</strong></td>
+                <td>@p.Origen → @p.Destino</td>
+                <td>@p.FechaSalida.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@p.FechaCompra.ToString("dd/MM/yyyy")</td>
+                <td>$@p.PrecioPagado.ToString("0.00")</td>
+                <td>
+                    <span class="badge @(p.Estado == "COMPRADO" ? "bg-success" : "bg-secondary")">@p.Estado</span>
+                </td>
+                <td>
+                    @if (p.MontoReintegrado.HasValue)
+                    {
+                        <span>$@p.MontoReintegrado.Value.ToString("0.00")</span>
+                    }
+                </td>
+                <td class="text-end">
+                    @if (p.Estado == "COMPRADO")
+                    {
+                        <a asp-action="ConfirmarDevolucion" asp-route-id="@p.Id" class="btn btn-sm btn-outline-danger">
+                            Devolver
+                        </a>
+                    }
+                </td>
+            </tr>
+        }
+        @if (!Model.Any())
+        {
+            <tr><td colspan="8" class="text-center text-muted">No tenés pasajes para el período seleccionado.</td></tr>
+        }
+    </tbody>
+</table>

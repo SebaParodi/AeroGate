@@ -1,0 +1,92 @@
+@model List<VMVuelo>
+@{
+    ViewData["Title"] = "Vuelos";
+    string rol = Context.Session.GetString("rol");
+
+    string BadgeEstado(string estado)
+    {
+        switch (estado)
+        {
+            case "PROGRAMADO": return "bg-primary";
+            case "DEMORADO":   return "bg-warning text-dark";
+            case "EMBARQUE":   return "bg-info text-dark";
+            case "EN_VUELO":   return "bg-secondary";
+            case "ATERRIZADO": return "bg-success";
+            case "CANCELADO":  return "bg-danger";
+            default:           return "bg-light text-dark";
+        }
+    }
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Gestión de Vuelos</h2>
+    @if (rol == "ADMINISTRADOR")
+    {
+        <a asp-action="Create" class="btn btn-primary">+ Nuevo Vuelo</a>
+    }
+</div>
+
+<table class="table table-striped table-hover align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th>Código</th>
+            <th>Ruta</th>
+            <th>Salida</th>
+            <th>Precio base</th>
+            <th>Asientos</th>
+            <th>Estado</th>
+            <th>Cambiar estado</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var v in Model)
+        {
+            <tr>
+                <td><strong>@v.Codigo</strong></td>
+                <td>@v.Origen → @v.Destino</td>
+                <td>@v.FechaSalida.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>$@v.PrecioBase.ToString("0.00")</td>
+                <td>@v.AsientosDisponibles / @v.CapacidadAsientos</td>
+                <td><span class="badge @BadgeEstado(v.Estado)">@v.Estado</span></td>
+                <td>
+                    @if (v.TransicionesValidas().Any())
+                    {
+                        <form method="post" asp-action="CambiarEstado" asp-route-id="@v.Id" class="d-flex gap-1">
+                            <select name="nuevoEstado" class="form-select form-select-sm" style="width:auto">
+                                @foreach (var estado in v.TransicionesValidas())
+                                {
+                                    <option value="@estado">@estado</option>
+                                }
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-outline-dark"
+                                    onclick="return confirm('¿Confirmar el cambio de estado? Si es CANCELADO se devuelve el 100% de los pasajes.')">
+                                OK
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Estado final</span>
+                    }
+                </td>
+                <td class="text-end">
+                    @if (rol == "ADMINISTRADOR" && v.Estado == "PROGRAMADO")
+                    {
+                        <a asp-action="Edit" asp-route-id="@v.Id" class="btn btn-sm btn-outline-primary">Editar</a>
+                        <form method="post" asp-action="Delete" asp-route-id="@v.Id" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-outline-danger"
+                                    onclick="return confirm('¿Eliminar el vuelo @v.Codigo? Solo es posible si no tiene pasajes vendidos.')">
+                                Eliminar
+                            </button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+        @if (!Model.Any())
+        {
+            <tr><td colspan="8" class="text-center text-muted">No hay vuelos registrados.</td></tr>
+        }
+    </tbody>
+</table>

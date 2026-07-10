@@ -1,0 +1,64 @@
+@model VMDashboard
+@{
+    ViewData["Title"] = "Inicio";
+}
+
+<h2 class="mb-1">Bienvenido, @Model.NombreUsuario</h2>
+<p class="text-muted mb-4">Rol: @Model.Rol</p>
+
+<div class="row">
+    @if (Model.Rol == "ADMINISTRADOR" || Model.Rol == "OPERADOR")
+    {
+        <div class="col-md-4 mb-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h1 class="display-4">@Model.TotalVuelos</h1>
+                    <p class="card-text">Vuelos activos</p>
+                    <a asp-controller="Vuelo" asp-action="Index" class="btn btn-outline-primary btn-sm">Gestionar</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h1 class="display-4">@Model.TotalAeropuertos</h1>
+                    <p class="card-text">Aeropuertos en catálogo</p>
+                    <a asp-controller="Aeropuerto" asp-action="Index" class="btn btn-outline-primary btn-sm">Gestionar</a>
+                </div>
+            </div>
+        </div>
+    }
+    @if (Model.Rol == "ADMINISTRADOR")
+    {
+        <div class="col-md-4 mb-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h1 class="display-4">@Model.TotalUsuarios</h1>
+                    <p class="card-text">Usuarios registrados</p>
+                    <a asp-controller="Usuario" asp-action="Index" class="btn btn-outline-primary btn-sm">Gestionar</a>
+                </div>
+            </div>
+        </div>
+    }
+    @if (Model.Rol == "CLIENTE")
+    {
+        <div class="col-md-4 mb-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h1 class="display-4">@Model.MisPasajesActivos</h1>
+                    <p class="card-text">Mis pasajes activos</p>
+                    <a asp-controller="Pasaje" asp-action="MisPasajes" class="btn btn-outline-primary btn-sm">Ver</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h1 class="display-4">@Model.VuelosDisponibles</h1>
+                    <p class="card-text">Vuelos disponibles para comprar</p>
+                    <a asp-controller="Pasaje" asp-action="Comprar" class="btn btn-primary btn-sm">Comprar</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

@@ -1,0 +1,47 @@
+@model List<VMVuelo>
+@{
+    ViewData["Title"] = "Comprar Pasaje";
+}
+
+<h2 class="mb-3">Vuelos Disponibles</h2>
+<p class="text-muted">El precio final se calcula con el descuento de tu categoría al confirmar la compra.</p>
+
+<table class="table table-striped table-hover align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th>Código</th>
+            <th>Ruta</th>
+            <th>Salida</th>
+            <th>Llegada estimada</th>
+            <th>Precio base</th>
+            <th>Asientos libres</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var v in Model)
+        {
+            <tr>
+                <td><strong>@v.Codigo</strong></td>
+                <td>@v.Origen → @v.Destino</td>
+                <td>@v.FechaSalida.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@v.FechaLlegadaEstimada.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>$@v.PrecioBase.ToString("0.00")</td>
+                <td>@v.AsientosDisponibles</td>
+                <td class="text-end">
+                    <form method="post" asp-action="Comprar">
+                        <input type="hidden" name="vueloId" value="@v.Id" />
+                        <button type="submit" class="btn btn-sm btn-primary"
+                                onclick="return confirm('¿Confirmar la compra del vuelo @v.Codigo?')">
+                            Comprar
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+        @if (!Model.Any())
+        {
+            <tr><td colspan="7" class="text-center text-muted">No hay vuelos disponibles en este momento.</td></tr>
+        }
+    </tbody>
+</table>

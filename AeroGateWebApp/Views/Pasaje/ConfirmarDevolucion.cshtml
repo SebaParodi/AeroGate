@@ -1,0 +1,19 @@
+@{
+    ViewData["Title"] = "Confirmar Devolución";
+}
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-5">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <h3 class="card-title mb-3">Confirmar Devolución</h3>
+                <p>Según tu categoría de cliente, el monto a reintegrar es:</p>
+                <h1 class="display-4 text-success mb-4">$@(((decimal)ViewBag.Monto).ToString("0.00"))</h1>
+                <form method="post" asp-action="Devolver" asp-route-id="@ViewBag.PasajeId" class="d-inline">
+                    <button type="submit" class="btn btn-danger">Confirmar devolución</button>
+                </form>
+                <a asp-action="MisPasajes" class="btn btn-outline-secondary">Cancelar</a>
+            </div>
+        </div>
+    </div>
+</div>

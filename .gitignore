@@ -1,0 +1,28 @@
+# Build results
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# VS Code
+.vscode/
+
+# Rider
+.idea/
+
+# NuGet
+*.nupkg
+packages/
+
+# Secrets locales (usar appsettings.Development.json / user-secrets)
+appsettings.*.local.json
+
+# Proyecto de referencia (obligatorio Des. Web) — no forma parte de AeroGate
+ReferenciaStellarMinds/
