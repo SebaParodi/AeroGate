@@ -63,7 +63,7 @@ Project_Sistema_Aeropuerto/
 | RF12 | Gestión de aeropuertos (catálogo IATA con búsqueda) | Admin / Operador |
 | RF13 | (Opcional, pendiente) Evaluación de condiciones con IA + fallback | Admin / Operador |
 
-La especificación completa está en [Docs/LETRA.md](Docs/LETRA.md) y el modelo de dominio en [Docs/DiagramaClases.md](Docs/DiagramaClases.md).
+La especificación completa está en [Docs/LETRA.md](Docs/LETRA.md), el modelo de dominio en [Docs/DiagramaClases.md](Docs/DiagramaClases.md), y el contexto del proyecto (flujos de cada requerimiento, reglas de negocio, decisiones de diseño, atributos de calidad y backlog) en [Docs/CONTEXTO_PROYECTO.md](Docs/CONTEXTO_PROYECTO.md).
 
 ---
 
@@ -81,11 +81,21 @@ Configuración en `AeroGateWebApi/appsettings.json`:
 
 > Ajustar el nombre de instancia según el entorno (`SQLEXPRESS`, `(localdb)\MSSQLLocalDB`, etc.).
 
-Las migraciones se aplican **automáticamente** al iniciar la API (`Database.Migrate()`), junto con el seed: un usuario de cada rol, 8 aeropuertos con códigos IATA reales y 8 vuelos con fechas relativas a la fecha actual (siempre hay vuelos vendibles para la demo).
+Las migraciones se aplican **automáticamente** al iniciar la API (`Database.Migrate()`), junto con el seed: un usuario de cada rol, 8 aeropuertos con códigos IATA reales y 8 vuelos con fechas relativas a la fecha de creación de la base. Si la base de desarrollo ya tiene unos meses y no quedan vuelos vendibles, se regenera con `dotnet ef database drop --project LogicaAccesoDatos --startup-project LogicaAccesoDatos --force` y reiniciando la API.
 
 ---
 
 ## 🚀 Cómo ejecutar
+
+### Paso 0 — Clave JWT (una sola vez)
+
+La clave de firma de los tokens **no se versiona**. En desarrollo se guarda con user-secrets (fuera del repositorio):
+
+```bash
+dotnet user-secrets set "Jwt:Key" "<una clave aleatoria de 32 caracteres o más>" --project AeroGateWebApi
+```
+
+En producción se define con la variable de entorno `Jwt__Key`. Si falta, la API no arranca e indica cómo configurarla.
 
 ### Paso 1 — API
 

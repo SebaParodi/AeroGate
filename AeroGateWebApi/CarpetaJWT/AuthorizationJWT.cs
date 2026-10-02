@@ -20,6 +20,13 @@ namespace AeroGateWebApi.CarpetaJWT
             var jwtIssuer   = config["Jwt:Issuer"];
             var jwtAudience = config["Jwt:Audience"];
 
+            // HMAC-SHA256 exige una clave de al menos 256 bits (32 bytes)
+            if (string.IsNullOrWhiteSpace(jwtKey) || Encoding.UTF8.GetByteCount(jwtKey) < 32)
+                throw new InvalidOperationException(
+                    "Falta la clave JWT (Jwt:Key, mínimo 32 caracteres). No se versiona en appsettings.json: " +
+                    "en desarrollo ejecutá  dotnet user-secrets set \"Jwt:Key\" \"<clave>\" --project AeroGateWebApi  " +
+                    "y en producción definí la variable de entorno Jwt__Key.");
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
